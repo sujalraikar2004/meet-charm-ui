@@ -1,31 +1,18 @@
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { motion } from 'framer-motion';
-import { Plus, Video, Clock, Users, TrendingUp, CalendarDays } from 'lucide-react';
+import { Plus, Video, Clock, Users, CalendarDays } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { PageTransition, FadeIn, StaggerContainer, StaggerItem } from '@/components/animations/PageTransition';
 import { MeetingCard } from '@/components/meetings/MeetingCard';
 import { CalendarWidget } from '@/components/meetings/CalendarWidget';
-import { MeetingCardSkeleton } from '@/components/ui/skeleton-loaders';
 import { useMeetingStore } from '@/stores/meetingStore';
-import { mockMeetings } from '@/data/mockData';
 import { isPast, parseISO } from 'date-fns';
 
 export default function DashboardPage() {
-  const { meetings, setMeetings, isLoading, setLoading } = useMeetingStore();
+  const { meetings } = useMeetingStore();
   const [selectedDate, setSelectedDate] = useState<Date>();
-
-  useEffect(() => {
-    // Simulate loading meetings from API
-    setLoading(true);
-    const timer = setTimeout(() => {
-      setMeetings(mockMeetings);
-      setLoading(false);
-    }, 1000);
-
-    return () => clearTimeout(timer);
-  }, [setMeetings, setLoading]);
 
   const upcomingMeetings = meetings
     .filter(m => !isPast(parseISO(m.scheduledAt)) && m.status !== 'cancelled')
@@ -105,13 +92,7 @@ export default function DashboardPage() {
               </div>
             </FadeIn>
 
-            {isLoading ? (
-              <div className="space-y-4">
-                {[1, 2, 3].map(i => (
-                  <MeetingCardSkeleton key={i} />
-                ))}
-              </div>
-            ) : upcomingMeetings.length > 0 ? (
+            {upcomingMeetings.length > 0 ? (
               <StaggerContainer className="space-y-4" staggerDelay={0.1}>
                 {upcomingMeetings.map((meeting) => (
                   <StaggerItem key={meeting._id}>
