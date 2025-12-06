@@ -1,3 +1,4 @@
+import { useEffect } from "react";
 import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
@@ -5,6 +6,8 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { ThemeProvider } from "@/components/providers/ThemeProvider";
 import { DashboardLayout } from "@/components/layout/DashboardLayout";
+import { useMeetingStore } from "@/stores/meetingStore";
+import { mockMeetings } from "@/data/mockData";
 
 // Pages
 import LandingPage from "./pages/LandingPage";
@@ -22,6 +25,19 @@ import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
 
+function AppInitializer({ children }: { children: React.ReactNode }) {
+  const { setMeetings, meetings } = useMeetingStore();
+
+  useEffect(() => {
+    // Initialize with mock data if empty
+    if (meetings.length === 0) {
+      setMeetings(mockMeetings);
+    }
+  }, [setMeetings, meetings.length]);
+
+  return <>{children}</>;
+}
+
 const App = () => (
   <QueryClientProvider client={queryClient}>
     <ThemeProvider>
@@ -29,26 +45,28 @@ const App = () => (
         <Toaster />
         <Sonner />
         <BrowserRouter>
-          <Routes>
-            {/* Public Routes */}
-            <Route path="/" element={<LandingPage />} />
-            <Route path="/login" element={<LoginPage />} />
-            <Route path="/register" element={<RegisterPage />} />
+          <AppInitializer>
+            <Routes>
+              {/* Public Routes */}
+              <Route path="/" element={<LandingPage />} />
+              <Route path="/login" element={<LoginPage />} />
+              <Route path="/register" element={<RegisterPage />} />
 
-            {/* Protected Routes with Dashboard Layout */}
-            <Route element={<DashboardLayout />}>
-              <Route path="/dashboard" element={<DashboardPage />} />
-              <Route path="/meetings" element={<MeetingsPage />} />
-              <Route path="/meetings/new" element={<CreateMeetingPage />} />
-              <Route path="/meetings/:meetingId" element={<MeetingDetailsPage />} />
-              <Route path="/meetings/:meetingId/transcription" element={<TranscriptionPage />} />
-              <Route path="/calendar" element={<CalendarPage />} />
-              <Route path="/profile" element={<ProfilePage />} />
-              <Route path="/settings" element={<SettingsPage />} />
-            </Route>
+              {/* Protected Routes with Dashboard Layout */}
+              <Route element={<DashboardLayout />}>
+                <Route path="/dashboard" element={<DashboardPage />} />
+                <Route path="/meetings" element={<MeetingsPage />} />
+                <Route path="/meetings/new" element={<CreateMeetingPage />} />
+                <Route path="/meetings/:meetingId" element={<MeetingDetailsPage />} />
+                <Route path="/meetings/:meetingId/transcription" element={<TranscriptionPage />} />
+                <Route path="/calendar" element={<CalendarPage />} />
+                <Route path="/profile" element={<ProfilePage />} />
+                <Route path="/settings" element={<SettingsPage />} />
+              </Route>
 
-            <Route path="*" element={<NotFound />} />
-          </Routes>
+              <Route path="*" element={<NotFound />} />
+            </Routes>
+          </AppInitializer>
         </BrowserRouter>
       </TooltipProvider>
     </ThemeProvider>

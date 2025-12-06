@@ -1,6 +1,4 @@
-import { useEffect, useState } from 'react';
 import { useParams, useNavigate, Link } from 'react-router-dom';
-import { motion } from 'framer-motion';
 import { format, parseISO } from 'date-fns';
 import { ArrowLeft, Download, Share2, Clock, Calendar, Users } from 'lucide-react';
 import { Button } from '@/components/ui/button';
@@ -8,20 +6,13 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { PageTransition, FadeIn } from '@/components/animations/PageTransition';
 import { AvatarGroup } from '@/components/shared/UserAvatar';
 import { useMeetingStore } from '@/stores/meetingStore';
-import { mockMeetings } from '@/data/mockData';
 import { toast } from 'sonner';
 
 export default function TranscriptionPage() {
   const { meetingId } = useParams();
   const navigate = useNavigate();
-  const { meetings, setMeetings } = useMeetingStore();
+  const { meetings } = useMeetingStore();
   const meeting = meetings.find(m => m._id === meetingId);
-
-  useEffect(() => {
-    if (!meetings.length) {
-      setMeetings(mockMeetings);
-    }
-  }, [meetings.length, setMeetings]);
 
   if (!meeting || !meeting.transcription) {
     return (

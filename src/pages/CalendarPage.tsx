@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import { format, startOfMonth, endOfMonth, eachDayOfInterval, isSameMonth, isSameDay, addMonths, subMonths, startOfWeek, endOfWeek, isToday, parseISO } from 'date-fns';
@@ -6,21 +6,13 @@ import { ChevronLeft, ChevronRight, Plus, Video, Clock } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { PageTransition, FadeIn } from '@/components/animations/PageTransition';
-import { MeetingCard } from '@/components/meetings/MeetingCard';
 import { useMeetingStore } from '@/stores/meetingStore';
-import { mockMeetings } from '@/data/mockData';
 import { cn } from '@/lib/utils';
 
 export default function CalendarPage() {
-  const { meetings, setMeetings } = useMeetingStore();
+  const { meetings } = useMeetingStore();
   const [currentMonth, setCurrentMonth] = useState(new Date());
   const [selectedDate, setSelectedDate] = useState<Date | null>(new Date());
-
-  useEffect(() => {
-    if (!meetings.length) {
-      setMeetings(mockMeetings);
-    }
-  }, [meetings.length, setMeetings]);
 
   const monthStart = startOfMonth(currentMonth);
   const monthEnd = endOfMonth(currentMonth);

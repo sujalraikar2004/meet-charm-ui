@@ -1,6 +1,4 @@
-import { useEffect, useState } from 'react';
 import { useParams, useNavigate, Link } from 'react-router-dom';
-import { motion } from 'framer-motion';
 import { format, parseISO, isPast } from 'date-fns';
 import {
   ArrowLeft,
@@ -22,10 +20,9 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { PageTransition, FadeIn } from '@/components/animations/PageTransition';
-import { UserAvatar, AvatarGroup } from '@/components/shared/UserAvatar';
+import { UserAvatar } from '@/components/shared/UserAvatar';
 import { useMeetingStore } from '@/stores/meetingStore';
 import { useAuthStore } from '@/stores/authStore';
-import { mockMeetings } from '@/data/mockData';
 import { toast } from 'sonner';
 import { cn } from '@/lib/utils';
 
@@ -40,19 +37,8 @@ export default function MeetingDetailsPage() {
   const { meetingId } = useParams();
   const navigate = useNavigate();
   const { user } = useAuthStore();
-  const { meetings, setMeetings, updateMeeting } = useMeetingStore();
-  const [meeting, setMeeting] = useState(meetings.find(m => m._id === meetingId));
-
-  useEffect(() => {
-    if (!meetings.length) {
-      setMeetings(mockMeetings);
-    }
-  }, [meetings.length, setMeetings]);
-
-  useEffect(() => {
-    const found = meetings.find(m => m._id === meetingId);
-    if (found) setMeeting(found);
-  }, [meetingId, meetings]);
+  const { meetings, updateMeeting } = useMeetingStore();
+  const meeting = meetings.find(m => m._id === meetingId);
 
   if (!meeting) {
     return (

@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import { Plus, Search, Filter, Video } from 'lucide-react';
@@ -7,24 +7,13 @@ import { Input } from '@/components/ui/input';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { PageTransition, StaggerContainer, StaggerItem } from '@/components/animations/PageTransition';
 import { MeetingCard } from '@/components/meetings/MeetingCard';
-import { MeetingCardSkeleton } from '@/components/ui/skeleton-loaders';
-import { useMeetingStore, MeetingStatus } from '@/stores/meetingStore';
-import { mockMeetings } from '@/data/mockData';
+import { useMeetingStore } from '@/stores/meetingStore';
 import { isPast, parseISO } from 'date-fns';
 
 export default function MeetingsPage() {
-  const { meetings, setMeetings, isLoading, setLoading } = useMeetingStore();
+  const { meetings } = useMeetingStore();
   const [searchQuery, setSearchQuery] = useState('');
   const [activeTab, setActiveTab] = useState<'all' | 'upcoming' | 'past' | 'cancelled'>('all');
-
-  useEffect(() => {
-    setLoading(true);
-    const timer = setTimeout(() => {
-      setMeetings(mockMeetings);
-      setLoading(false);
-    }, 800);
-    return () => clearTimeout(timer);
-  }, [setMeetings, setLoading]);
 
   const filterMeetings = () => {
     let filtered = meetings;
@@ -103,13 +92,7 @@ export default function MeetingsPage() {
           </TabsList>
 
           <TabsContent value={activeTab} className="mt-6">
-            {isLoading ? (
-              <div className="space-y-4">
-                {[1, 2, 3, 4].map(i => (
-                  <MeetingCardSkeleton key={i} />
-                ))}
-              </div>
-            ) : filteredMeetings.length > 0 ? (
+            {filteredMeetings.length > 0 ? (
               <StaggerContainer className="space-y-4">
                 {filteredMeetings.map((meeting) => (
                   <StaggerItem key={meeting._id}>
